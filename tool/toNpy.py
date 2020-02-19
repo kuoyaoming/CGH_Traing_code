@@ -7,23 +7,23 @@ import numpy as np
 NPY_PATH = 'C:/TWCC/data/data_414_new_AD/test/'
 DATA_PATH = 'C:/TWCC/data/data_414_new_AD/test/'
 labels = [
-    #"class1",
+    # "class1",
     "class2",
     # "class3",
     # "class4",
     # "class5",
     # "class6",
     # "class7",
-    #"class8",
+    # "class8",
     # "class9",
-    #"class10",
-    #"class11",
+    # "class10",
+    # "class11",
     # "class12"
-    #"class13",
-    #"class14",
-    #"class15",
-    #"class16"
-    ]
+    # "class13",
+    # "class14",
+    # "class15",
+    # "class16"
+]
 
 
 def wav2mfcc(file_path):

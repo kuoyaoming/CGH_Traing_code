@@ -1,6 +1,7 @@
 import numpy as np
 import librosa
 
+
 def manipulate(data, sampling_rate, shift_max, shift_direction):
     shift = np.random.randint(sampling_rate * shift_max)
     if shift_direction == 'right':
@@ -16,6 +17,7 @@ def manipulate(data, sampling_rate, shift_max, shift_direction):
     else:
         augmented_data[shift:] = 0
     return augmented_data
+
 
 y, sr = librosa.load('13_06_1_k1.wav')
 y_time = manipulate(y, sr, 2, 'right')

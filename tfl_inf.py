@@ -56,7 +56,8 @@ print(ans.shape)
 print(ans)
 predict_label = np.argmax(ans, axis=1)
 
-print (y_test.shape)
-print (predict_label.shape)
+print(y_test.shape)
+print(predict_label.shape)
 print(predict_label)
-print(pd.crosstab(y_test, predict_label,rownames=['label'], colnames=['predict']))
+print(pd.crosstab(y_test, predict_label,
+                  rownames=['label'], colnames=['predict']))

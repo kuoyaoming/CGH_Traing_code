@@ -7,12 +7,13 @@ import pylab
 from PIL import Image
 import matplotlib.cm as cm
 
-NAME = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]     #指定受試者
-INDEX = '17_3'                                  #指定單詞
-CLASS = [3, 4, 5, 6, 7, 9, 12]                  #指定類別
-DATA_PATH = 'E:/data_16c_all/'                  #音檔目錄
-SAVE_PATH = 'E:/tmp/'                           #暫存目錄
-SIZE = 1024                                     #圖片大小
+NAME = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]  # 指定受試者
+INDEX = '17_3'  # 指定單詞
+CLASS = [3, 4, 5, 6, 7, 9, 12]  # 指定類別
+DATA_PATH = 'E:/data_16c_all/'  # 音檔目錄
+SAVE_PATH = 'E:/tmp/'  # 暫存目錄
+SIZE = 1024  # 圖片大小
+
 
 def wav2png(IN_PATH, OUT_PATH):
     y, _ = librosa.load(IN_PATH)

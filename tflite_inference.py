@@ -19,7 +19,8 @@ import keras.backend as K
 import itertools
 from os import listdir
 from os.path import isfile, join, isdir, abspath
-from sklearn.metrics import classification_report ,confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
+
 
 def wav2mfcc(file_path):
     wave, sr = librosa.load(file_path, mono=True, sr=None)
@@ -27,7 +28,6 @@ def wav2mfcc(file_path):
     tmp = np.zeros([20, 420])
     tmp[:mfcc.shape[0], :mfcc.shape[1]] = mfcc
     return tmp
-
 
 
 def get_labels(path):
@@ -68,7 +68,7 @@ def plot_confusion_matrix(cm, classes,
 
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    #plt.tight_layout()
+    # plt.tight_layout()
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
 
@@ -87,7 +87,6 @@ print(output_details)
 # In[6]:
 
 
-from keras.utils import to_categorical
 print('start')
 mypath = '/home/power703/data/data_bace_414/test/'
 
@@ -96,8 +95,8 @@ y_true = []
 y_pred = []
 
 classes = ['Aspirated', 'Unaspirated', 'Bilabial', 'Velar', 'Fronting', 'Stopping', 'Affricate',
-                'Fricative', 'Gliding','Consonant', 'Complex vowel', 'Consonant-voewl',
-                'Prenuclear Glide']
+           'Fricative', 'Gliding', 'Consonant', 'Complex vowel', 'Consonant-voewl',
+           'Prenuclear Glide']
 
 label = ['1', '2', '3', '4', '5', '6', '7', '8',
          '9', '12', '13', '14', '15']
@@ -125,9 +124,9 @@ for i in folders:
         out = np.argmax(interpreter.get_tensor(output_details[0]['index']))
         ans = labels[int(out)]
         guess = ans.split('class', 2)[1]
-        y_true.append(int(real))    
+        y_true.append(int(real))
         y_pred.append(int(guess))
-        
+
     print(i)
 
 plt.figure()
@@ -143,17 +142,7 @@ print(classification_report(y_true, y_pred, target_names=label, digits=3))
 # In[ ]:
 
 
-
-
-
 # In[ ]:
 
 
-
-
-
 # In[ ]:
-
-
-
-
