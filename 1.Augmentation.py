@@ -6,7 +6,7 @@ from pydub import AudioSegment, effects
 import subprocess
 import soundfile as sf
 
-DATASET = 'split_10k/chu'
+DATASET = 'test'
 DATA_PATH = '/home/power703/work/cgh/data/'+DATASET
 num_threads = 64
 
@@ -69,7 +69,7 @@ def DRC(PATH):
 
 def increase_db(PATH):
     PATH_ = PATH[:-4]+'_10db_.wav'
-    proc = subprocess.call([
+    subprocess.call([
         'ffmpeg',
         '-hide_banner',
         '-loglevel', 'warning',
@@ -102,17 +102,28 @@ def addNoise(PATH):
 
 
 def Normalize(PATH):
-    rawsound = AudioSegment.from_file(PATH, "wav")
-    normalizedsound = effects.normalize(rawsound)
-    normalizedsound.export(PATH, format="wav")
+    # rawsound = AudioSegment.from_file(PATH, "wav")
+    # normalizedsound = effects.normalize(rawsound)
+    # normalizedsound.export(PATH, format="wav")\
+    PATH_ = PATH[:-4]+'n.wav'
+    subprocess.call([
+        'ffmpeg',
+        '-i', PATH,
+        '-filter:a', 'loudnorm',
+        PATH_
+    ])
 
 
 if __name__ == '__main__':
     IN_PATH = []
     for root, dirs, files in os.walk(os.path.abspath(DATA_PATH)):
+        # print(root, dirs, files)
         for file in files:
             if("wav" in file):
                 IN_PATH.append(os.path.join(root, file))
+
+            # if("WAV" in file):
+            #     IN_PATH.append(os.path.join(root, file))
     print('file number: ', len(IN_PATH))
     print('num_threads: ', num_threads)
     print('WROKING...')
