@@ -2,13 +2,13 @@ import os
 import librosa
 import numpy as np
 from multiprocessing import Pool
-from pydub import AudioSegment, effects
 import subprocess
+import joblib
 import soundfile as sf
 
-DATASET = 'test'
+DATASET = 'paper_e2/chu_7/ori/'
 DATA_PATH = '/home/power703/work/cgh/data/'+DATASET
-num_threads = 64
+num_threads = 36
 
 
 def mix(PATH):
@@ -47,20 +47,24 @@ def time_shift(PATH):
 
 
 def change_speed(PATH):
-    y, sr = librosa.load(PATH)
-    y1 = librosa.effects.time_stretch(y, 1.25)
-    sf.write(PATH[:-4]+'_f_.wav', y1, sr)
-    y1 = librosa.effects.time_stretch(y, 0.75)
-    sf.write(PATH[:-4]+'_s_.wav', y1, sr)
-
+    try:
+        y, sr = librosa.load(PATH)
+        y1 = librosa.effects.time_stretch(y, 1.25)
+        sf.write(PATH[:-4]+'_f_.wav', y1, sr)
+        y1 = librosa.effects.time_stretch(y, 0.75)
+        sf.write(PATH[:-4]+'_s_.wav', y1, sr)
+    except:
+        pass
 
 # Dynamic Range Compression
 def DRC(PATH):
     PATH_ = PATH[:-4]+'_drc_.wav'
     subprocess.call([
         'ffmpeg',
+        '-y',
         '-hide_banner',
         '-loglevel', 'warning',
+        '-channel_layout', 'mono',
         '-i', PATH,
         '-filter_complex', "compand=attacks=0:points=-80/-900|-45/-15|-27/-9|0/-7|20/-7:gain=5",
         PATH_
@@ -71,8 +75,10 @@ def increase_db(PATH):
     PATH_ = PATH[:-4]+'_10db_.wav'
     subprocess.call([
         'ffmpeg',
+        '-y',
         '-hide_banner',
         '-loglevel', 'warning',
+        '-channel_layout', 'mono',
         '-i', PATH,
         '-filter:a', "volume=10dB",
         PATH_
@@ -108,6 +114,7 @@ def Normalize(PATH):
     PATH_ = PATH[:-4]+'n.wav'
     subprocess.call([
         'ffmpeg',
+        '-y',
         '-i', PATH,
         '-filter:a', 'loudnorm',
         PATH_
@@ -120,11 +127,21 @@ if __name__ == '__main__':
         # print(root, dirs, files)
         for file in files:
             if("wav" in file):
-                IN_PATH.append(os.path.join(root, file))
+                if('_.wav' in file):
+                    pass
+                else:
+                    IN_PATH.append(os.path.join(root, file))
 
             # if("WAV" in file):
             #     IN_PATH.append(os.path.join(root, file))
-    print('file number: ', len(IN_PATH))
-    print('num_threads: ', num_threads)
-    print('WROKING...')
-    Pool(num_threads).map(mix, IN_PATH)
+    # print('file number: ', len(IN_PATH))
+    # print('num_threads: ', num_threads)
+    # print('WROKING...')
+    # pool_output = Pool(num_threads).map(mix, IN_PATH)
+    # print(pool_output)
+    # print('#################################################################################')
+    # print('DONE~~')
+
+    verbose=1
+    jobs = [ joblib.delayed(mix)(i) for i in IN_PATH ]
+    joblib.Parallel(n_jobs=num_threads, verbose=verbose)(jobs)

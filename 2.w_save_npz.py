@@ -6,9 +6,12 @@ import sys
 import time
 from random import shuffle
 import random
+import pickle
+a_file = open("/home/power703/work/cgh/jsonmv/chu_0424.pkl", "rb")
+output = pickle.load(a_file)
 
 num_threads = 32
-dataset = 'nt_student'
+dataset = 'chu_0424'
 ROOT = '/work/power703/cgh/data/'
 save_path = ROOT+dataset+'/'
 classes = []
@@ -18,41 +21,50 @@ aug_path = ROOT+dataset+'/aug/'
 for n, _, _ in os.walk(os.path.abspath(ori_path)):
     classes.append(n.split('/')[-1])
 
-classes = classes[1:]
-classes = [int(x) for x in classes]
-classes.sort()
 
-classes = [str(x) for x in classes]
-print(classes)
-
-numberOfPart = 8
-
-print('*'*100)
-print('DataSet: ', dataset)
-print('part: ', numberOfPart)
-print('class: ', len(classes))
-print('*'*100)
-
-
-def chunkIt(seq, num):
-    avg = len(seq) / float(num)
-    out = []
-    last = 0.0
-
-    while last < len(seq):
-        out.append(seq[int(last):int(last + avg)])
-        last += avg
-    return out
 
 
 def load_data(npy_name):
-    lable = npy_name[npy_name.rfind('/')+1:].split('_')
-    lable = classes.index(lable[0])  # +'_'+lable[1]
+    # lable = npy_name[npy_name.rfind('/')+1:].split('_')
+    # # print()
+    # lable = classes.index(lable[0])  # +'_'+lable[1]
+    # print(npy_name[npy_name.rfind('/')+1:])
+    lable = output[npy_name[npy_name.rfind('/')+1:]]
+    # import sys
+    # sys.exit()
     data = np.load(npy_name[:-4]+'.npy')
 
     return data, lable
 
+origin_list = []
+for root2, _, files2 in os.walk(os.path.abspath(ori_path)):
+        for file2 in files2:
+            if('wav' in file2):
+                origin_list.append(os.path.join(root2, file2))
+                # ori_n = ori_n+1
+            if('WAV' in file2):
+                origin_list.append(os.path.join(root2, file2))
+                # ori_n = ori_n+1
+x_train = []
+y_train = []
+# print(origin_list)
+pool = Pool(num_threads)
+pool_outputs = pool.map(load_data, origin_list)
+for i in pool_outputs:
+    x_train.append(i[0])
+    y_train.append(i[1])
 
+print('x_train len: ', len(x_train))
+print('y_train len: ',len(y_train))
+
+np.savez(
+    save_path+'part_test',
+    x_train=np.asarray(x_train),
+    y_train=np.asarray(y_train)
+    # x_test=np.asarray(x_test),
+    # y_test=np.asarray(y_test)
+)
+'''
 train_list = [[] for i in range(numberOfPart)]
 test_list = [[] for i in range(numberOfPart)]
 origin_list = []
@@ -62,14 +74,7 @@ for n in classes:
     ori_n = 0
 
     # add all origin file path to list
-    for root2, _, files2 in os.walk(os.path.abspath(ori_path)):
-        for file2 in files2:
-            if('wav' in file2):
-                origin_list.append(os.path.join(root2, file2))
-                ori_n = ori_n+1
-            if('WAV' in file2):
-                origin_list.append(os.path.join(root2, file2))
-                ori_n = ori_n+1
+    
 
     print('Class: ', f'{n:5}', ' origin: ',
           f'{ori_n:4}')
@@ -180,3 +185,4 @@ for n in range(numberOfPart):
         x_test=np.asarray(x_test),
         y_test=np.asarray(y_test)
     )
+'''
